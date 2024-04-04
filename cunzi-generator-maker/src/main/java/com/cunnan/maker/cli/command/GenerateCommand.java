@@ -1,7 +1,7 @@
 package com.cunnan.maker.cli.command;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.cunnan.maker.generator.MainGenerator;
+import com.cunnan.maker.generator.file.FileGenerator;
 import com.cunnan.maker.model.DataModel;
 import lombok.Data;
 
@@ -32,7 +32,7 @@ public class GenerateCommand implements Callable<Integer> {
         DataModel dataModel = new DataModel();
         BeanUtil.copyProperties(this, dataModel);
         System.out.println("配置信息" + dataModel);
-        MainGenerator.doGenerate(dataModel);
+        FileGenerator.doGenerate(dataModel);
         return 0;
     }
 }

@@ -1,6 +1,5 @@
-package com.cunnan.maker.generator;
+package com.cunnan.maker.generator.file;
 
-import com.cunnan.maker.model.DataModel;
 import freemarker.template.TemplateException;
 
 import java.io.File;
@@ -10,17 +9,7 @@ import java.io.IOException;
  * @author CunNan
  * @Description
  */
-public class MainGenerator {
-
-    public static void main(String[] args) throws TemplateException, IOException {
-
-        DataModel dataModel = new DataModel();
-        dataModel.setAuthor("cunnan1");
-        dataModel.setLoop(false);
-        dataModel.setOutputText("求和结果：");
-        doGenerate(dataModel);
-
-    }
+public class FileGenerator {
 
     public static void doGenerate(Object model) throws TemplateException, IOException {
         //
@@ -37,10 +26,10 @@ public class MainGenerator {
         // 输出路径
         String outputPath = projectPath;
         // 生成静态文件
-        StaticGenerator.copyFilesByRecursive(inputPath, outputPath);
+        StaticFileGenerator.copyFilesByHutool(inputPath, outputPath);
         // 生成动态文件
         String inputDynamicFilePath = projectPath + File.separator + "cunzi-generator-maker" + File.separator + "src/main/resources/templates/MainTemplate.java.ftl";
         String outputDynamicFilePath = projectPath + File.separator + "acm-template/src/com/cunnan/acm/MainTemplate.java";
-        DynamicGenerator.doGenerator(inputDynamicFilePath, outputDynamicFilePath, model);
+        DynamicFileGenerator.doGenerator(inputDynamicFilePath, outputDynamicFilePath, model);
     }
 }
