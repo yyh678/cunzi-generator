@@ -38,6 +38,10 @@ public class DynamicGenerator {
         String templateName = new File(inputPath).getName();
         Template template = configuration.getTemplate(templateName);
 
+        // 如果文件不存在就生成文件
+        if(!FileUtil.exist(outputPath)){
+            FileUtil.touch(outputPath);
+        }
 
         // 生成
         Writer out = new FileWriter(outputPath);

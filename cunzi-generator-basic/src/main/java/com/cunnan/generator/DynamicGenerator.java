@@ -1,5 +1,6 @@
 package com.cunnan.generator;
 
+import cn.hutool.core.io.FileUtil;
 import com.cunnan.model.MainTemplateConfig;
 import freemarker.cache.FileExtensionMatcher;
 import freemarker.template.Configuration;
@@ -47,6 +48,11 @@ public class DynamicGenerator {
         // 创建模板对象，加载指定模板
         String templateName = new File(inputPath).getName();
         Template template = configuration.getTemplate(templateName);
+
+        // 如果文件不存在就生成文件
+        if(!FileUtil.exist(outputPath)){
+            FileUtil.touch(outputPath);
+        }
 
         // 生成
         Writer out = new FileWriter(outputPath);
