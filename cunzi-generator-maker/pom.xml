@@ -15,7 +15,7 @@
     </properties>
 
     <dependencies>
-        <!-- https://doc.hutool.cn/ -->
+        <!-- https://doc.hutool.cn/-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
