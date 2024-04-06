@@ -1,22 +1,19 @@
-package com.cunnan.maker.cli;
+package ${basePackage}.cli;
 
-import com.cunnan.maker.cli.command.ConfigCommand;
-import com.cunnan.maker.cli.command.GenerateCommand;
-import com.cunnan.maker.cli.command.ListCommand;
+import ${basePackage}.cli.command.GenerateCommand;
+import ${basePackage}.cli.command.ListCommand;
+import ${basePackage}.cli.command.ConfigCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 /**
- * @author CunNan
- * @Description 实际命令执行者
+ * 命令执行器
  */
-
-@Command(name = "cunzi", mixinStandardHelpOptions = true)
-public class CommandExecutor implements Runnable{
+@Command(name = "${name}", mixinStandardHelpOptions = true)
+public class CommandExecutor implements Runnable {
 
     private final CommandLine commandLine;
 
-    // 不用new初始化，而是放在代码块里是因为之后我们使用的都是同一个commandLine，没有必要每次都new一个对象
     {
         commandLine = new CommandLine(this)
                 .addSubcommand(new GenerateCommand())
@@ -26,11 +23,16 @@ public class CommandExecutor implements Runnable{
 
     @Override
     public void run() {
-        // 不输出子命令时给出相应的提示
-        System.out.println("请输入具体命令，或输入 --help 查看帮助信息");
+        // 不输入子命令时，给出友好提示
+        System.out.println("请输入具体命令，或者输入 --help 查看命令提示");
     }
 
-    // 执行命令
+    /**
+     * 执行命令
+     *
+     * @param args
+     * @return
+     */
     public Integer doExecute(String[] args) {
         return commandLine.execute(args);
     }

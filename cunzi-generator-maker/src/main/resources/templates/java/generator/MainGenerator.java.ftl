@@ -1,4 +1,3 @@
-
 package ${basePackage}.generator;
 
 import com.cunnan.model.DataModel;

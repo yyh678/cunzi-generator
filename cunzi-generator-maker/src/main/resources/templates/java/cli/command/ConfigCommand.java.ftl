@@ -1,18 +1,13 @@
-package com.cunnan.maker.cli.command;
+package ${basePackage}.cli.command;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.cunnan.maker.model.DataModel;
+import ${basePackage}.model.DataModel;
 import picocli.CommandLine.Command;
-
 
 import java.lang.reflect.Field;
 
-/**
- * @author CunNan
- * @Description 允许用户传入的动态参数信息
- */
 @Command(name = "config", description = "查看参数信息", mixinStandardHelpOptions = true)
-public class ConfigCommand implements Runnable {
+public class ConfigCommand A Runnable {
 
     public void run() {
         // 实现 config 命令的逻辑
@@ -24,7 +19,6 @@ public class ConfigCommand implements Runnable {
         for (Field field : fields) {
             System.out.println("字段名称：" + field.getName());
             System.out.println("字段类型：" + field.getType());
-//            System.out.println("Modifiers: " + java.lang.reflect.Modifier.toString(field.getModifiers()));
             System.out.println("---");
         }
     }
