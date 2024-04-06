@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class MainGenerator {
 
-    public static void main(String[] args) throws TemplateException, IOException {
+    public static void main(String[] args) throws TemplateException, IOException, InterruptedException {
         Meta meta = MetaManager.getMetaObject();
         System.out.println(meta);
 
@@ -70,5 +70,28 @@ public class MainGenerator {
         inputFilePath = inputResourcePath + File.separator + "templates/java/Main.java.ftl";
         outputFilePath = outputBaseJavaPackagePath + "/Main.java";
         DynamicFileGenerator.doGenerator(inputFilePath , outputFilePath, meta);
+
+        // generator.DynamicGenerator
+        inputFilePath = inputResourcePath + File.separator + "templates/java/generator/DynamicGenerator.java.ftl";
+        outputFilePath = outputBaseJavaPackagePath + "/generator/DynamicGenerator.java";
+        DynamicFileGenerator.doGenerator(inputFilePath , outputFilePath, meta);
+
+        // generator.MainGenerator
+        inputFilePath = inputResourcePath + File.separator + "templates/java/generator/MainGenerator.java.ftl";
+        outputFilePath = outputBaseJavaPackagePath + "/generator/MainGenerator.java";
+        DynamicFileGenerator.doGenerator(inputFilePath , outputFilePath, meta);
+
+        // generator.StaticGenerator
+        inputFilePath = inputResourcePath + File.separator + "templates/java/generator/StaticGenerator.java.ftl";
+        outputFilePath = outputBaseJavaPackagePath + "/generator/StaticGenerator.java";
+        DynamicFileGenerator.doGenerator(inputFilePath , outputFilePath, meta);
+
+        // pom.xml.ftl.xml
+        inputFilePath = inputResourcePath + File.separator + "templates/pom.xml.ftl";
+        outputFilePath = outputPath + File.separator + "pom.xml";
+        DynamicFileGenerator.doGenerator(inputFilePath , outputFilePath, meta);
+
+        // 构建 jar 包
+        JarGenerator.doGenerate(outputPath);
     }
 }

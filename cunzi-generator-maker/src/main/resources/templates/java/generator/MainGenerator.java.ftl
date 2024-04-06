@@ -1,6 +1,5 @@
 package ${basePackage}.generator;
 
-import com.cunnan.model.DataModel;
 import freemarker.template.TemplateException;
 
 import java.io.File;
