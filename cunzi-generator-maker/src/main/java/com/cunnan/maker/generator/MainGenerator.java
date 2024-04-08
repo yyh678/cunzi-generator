@@ -113,7 +113,7 @@ public class MainGenerator {
         // 生成精简版的程序（产物包）
         String distOutputPath = outputPath + "-dist";
         // - 拷贝 jar 包
-        String targetAbsolutePath = distOutputPath + File.separator + "target";
+        String targetAbsolutePath = distOutputPath +File.separator+ "target";
         FileUtil.mkdir(targetAbsolutePath);
         String jarAbsolutePath = outputPath + File.separator + jarPath;
         FileUtil.copy(jarAbsolutePath, targetAbsolutePath, true);
