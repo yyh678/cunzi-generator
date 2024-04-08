@@ -2,7 +2,7 @@
   "name": "acm-template-pro-generator",
   "description": "ACM 示例模板生成器",
   "basePackage": "com.cunnan",
-  "version": "1.0",
+  "version": "1.0.0",
   "author": "cunnan",
   "createTime": "2024-1-2",
   "fileConfig": {
