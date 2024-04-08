@@ -6,8 +6,9 @@
   "author": "cunnan",
   "createTime": "2024-1-2",
   "fileConfig": {
-    "inputRootPath": "E:/PlanetPojo/planetpro/cunzi-generator/cunzi-generator-demo-projects/acm-template-pro",
+    "inputRootPath": ".source/acm-template-pro",
     "outputRootPath": "generated",
+    "sourceRootPath": "E:/PlanetPojo/planetpro/cunzi-generator/cunzi-generator-demo-projects/acm-template-pro",
     "type": "dir",
     "files": [
       {
