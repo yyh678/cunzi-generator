@@ -23,4 +23,8 @@ public class DataModel {
      */
     private String outputText;
 
+    /**
+     * 是否需要gitignore
+     */
+    private boolean needGit;
 }
