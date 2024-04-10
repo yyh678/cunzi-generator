@@ -19,7 +19,6 @@ public class MainGenerator {
 * @throws IOException
 */
 public static void doGenerate(DataModel model) throws TemplateException, IOException {
-
 String inputRootPath = "${fileConfig.inputRootPath}";
 String outputRootPath = "${fileConfig.outputRootPath}";
 
@@ -31,23 +30,50 @@ String outputPath;
 </#list>
 
 <#list fileConfig.files as fileInfo>
-    <#if fileInfo.condition??>
-        if(${fileInfo.condition}) {
-        inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
-        outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
-        <#if fileInfo.generateType == "static">
-            StaticGenerator.copyFilesByHutool(inputPath, outputPath);
+    <#if fileInfo.groupKey??>
+        // groupKey = ${fileInfo.groupKey}
+        <#if fileInfo.condition??>
+            if(${fileInfo.condition}) {
+            <#list fileInfo.files as fileInfo>
+                inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
+                outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
+                <#if fileInfo.generateType == "static">
+                    StaticGenerator.copyFilesByHutool(inputPath, outputPath);
+                <#else>
+                    DynamicGenerator.doGenerate(inputPath, outputPath, model);
+                </#if>
+            </#list>
+            }
         <#else>
-            DynamicGenerator.doGenerate(inputPath, outputPath, model);
+            <#list fileInfo.files as fileInfo>
+                inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
+                outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
+                <#if fileInfo.generateType == "static">
+                    StaticGenerator.copyFilesByHutool(inputPath, outputPath);
+                <#else>
+                    DynamicGenerator.doGenerate(inputPath, outputPath, model);
+                </#if>
+            </#list>
         </#if>
-        }
     <#else>
-        inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
-        outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
-        <#if fileInfo.generateType == "static">
-            StaticGenerator.copyFilesByHutool(inputPath, outputPath);
+        <#if fileInfo.condition??>
+            if(${fileInfo.condition}) {
+            inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
+            outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
+            <#if fileInfo.generateType == "static">
+                StaticGenerator.copyFilesByHutool(inputPath, outputPath);
+            <#else>
+                DynamicGenerator.doGenerate(inputPath, outputPath, model);
+            </#if>
+            }
         <#else>
-            DynamicGenerator.doGenerate(inputPath, outputPath, model);
+            inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
+            outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
+            <#if fileInfo.generateType == "static">
+                StaticGenerator.copyFilesByHutool(inputPath, outputPath);
+            <#else>
+                DynamicGenerator.doGenerate(inputPath, outputPath, model);
+            </#if>
         </#if>
     </#if>
 </#list>

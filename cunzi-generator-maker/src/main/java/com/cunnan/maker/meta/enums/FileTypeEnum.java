@@ -1,12 +1,15 @@
 package com.cunnan.maker.meta.enums;
 
+import java.nio.file.attribute.GroupPrincipal;
+
 /**
  * @author CunNan
  * @Description
  */
 public enum FileTypeEnum {
     DIR("目录","dir"),
-    FILE("文件","file");
+    FILE("文件","file"),
+    GROUP("文件组","group");
 
     public String getText() {
         return text;
