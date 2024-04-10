@@ -59,6 +59,9 @@ public class Meta {
             // 避免后期错误
             private Object defaultValue;
             private String abbr;
+            private String groupKey;
+            private String groupName;
+            private List<ModelInfo> models;
         }
     }
 }

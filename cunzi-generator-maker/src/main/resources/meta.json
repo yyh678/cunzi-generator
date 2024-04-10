@@ -56,18 +56,26 @@
         "abbr": "l"
       },
       {
-        "fieldName": "author",
-        "type": "String",
-        "description": "作者注释",
-        "defaultValue": "cunnan",
-        "abbr": "a"
-      },
-      {
-        "fieldName": "outputText",
-        "type": "String",
-        "description": "输出信息",
-        "defaultValue": "sum = ",
-        "abbr": "o"
+        "groupKey": "mainTemplate",
+        "groupName": "核心模板",
+        "type": "mainTemplate",
+        "description": "核心模板文件生成",
+        "models": [
+          {
+            "fieldName": "author",
+            "type": "String",
+            "description": "作者注释",
+            "defaultValue": "cunnan",
+            "abbr": "a"
+          },
+          {
+            "fieldName": "outputText",
+            "type": "String",
+            "description": "输出信息",
+            "defaultValue": "sum = ",
+            "abbr": "o"
+          }
+        ]
       }
     ]
   }

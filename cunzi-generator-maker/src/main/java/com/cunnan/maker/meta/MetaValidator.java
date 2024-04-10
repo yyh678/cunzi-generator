@@ -39,6 +39,10 @@ public class MetaValidator {
             return;
         }
         for (Meta.ModelConfig.ModelInfo modelInfo : modelInfoList) {
+            String groupKey = modelInfo.getGroupKey();
+            if(StrUtil.isNotEmpty(groupKey)){
+                continue;
+            }
             // 输出路径默认值
             String fieldName = modelInfo.getFieldName();
             if (StrUtil.isBlank(fieldName)) {
@@ -87,7 +91,7 @@ public class MetaValidator {
             return;
         }
         for (Meta.FileConfig.FileInfo fileInfo : fileInfoList) {
-            String type = fileConfig.getType();
+            String type = fileInfo.getType();
             if (FileTypeEnum.GROUP.getValue().equals(type)){
                 continue;
             }
@@ -103,7 +107,7 @@ public class MetaValidator {
                 fileInfo.setOutputPath(inputPath);
             }
             // type：默认 inputPath 有文件后缀（如 .java）为 file，否则为 dir
-            String type = fileInfo.getType();
+            // String type = fileInfo.getType();
             if (StrUtil.isBlank(type)) {
                 // 无文件后缀
                 if (StrUtil.isBlank(FileUtil.getSuffix(inputPath))) {
