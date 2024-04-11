@@ -60,6 +60,7 @@
         "groupName": "核心模板",
         "type": "mainTemplate",
         "description": "核心模板文件生成",
+        "condition": "loop",
         "models": [
           {
             "fieldName": "author",

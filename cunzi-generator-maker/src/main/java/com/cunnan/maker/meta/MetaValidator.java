@@ -11,6 +11,7 @@ import com.cunnan.maker.meta.enums.ModelTypeEnum;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author CunNan
@@ -41,6 +42,12 @@ public class MetaValidator {
         for (Meta.ModelConfig.ModelInfo modelInfo : modelInfoList) {
             String groupKey = modelInfo.getGroupKey();
             if(StrUtil.isNotEmpty(groupKey)){
+                // 生成中间参数
+                List<Meta.ModelConfig.ModelInfo> subModelInfoList = modelInfo.getModels();
+                String allArgsStr = modelInfo.getModels().stream()
+                        .map(subModelInfo -> String.format("\"--%s\"", subModelInfo.getFieldName()))
+                        .collect(Collectors.joining(", "));
+                modelInfo.setAllArgsStr(allArgsStr);
                 continue;
             }
             // 输出路径默认值
