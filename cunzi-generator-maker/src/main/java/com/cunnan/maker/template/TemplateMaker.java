@@ -136,15 +136,21 @@ public class TemplateMaker {
         String replacement = String.format("${%s}", modelInfo.getFieldName());
         String newFileContent = StrUtil.replace(fileContent, searchStr, replacement);
 
-        // 输出模板文件
-        FileUtil.writeUtf8String(newFileContent, fileOutputAbsolutePath);
-
         // 文件配置信息
         Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
         fileInfo.setInputPath(fileInputPath);
         fileInfo.setOutputPath(fileOutputPath);
         fileInfo.setType(FileTypeEnum.FILE.getValue());
-        fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
+        // 和原文件内容对比，如果一致，则为静态文件，否则为动态文件
+        if(newFileContent.equals(fileContent)){
+            // 输入路径和输出路径一致，说明是静态文件
+            fileInfo.setOutputPath(fileInputPath);
+            fileInfo.setGenerateType(FileGenerateTypeEnum.STATIC.getValue());
+        }else{
+            // 生成类型为动态
+            fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
+            FileUtil.writeUtf8String(newFileContent, fileOutputAbsolutePath);
+        }
         return fileInfo;
     }
 
@@ -154,8 +160,8 @@ public class TemplateMaker {
         meta.setDescription("ACM 示例模板生成器");
 
         String projectPath = System.getProperty("user.dir");
-        String originProjectPath = new File(projectPath).getParent() + File.separator + "cunzi-generator-demo-projects/acm-template";
-        String inputFilePath = "src/com/cunnan/acm/MainTemplate.java";
+        String originProjectPath = new File(projectPath).getParent() + File.separator + "cunzi-generator-demo-projects/springboot-init";
+        String inputFilePath = "src/main/java/com/cunnan/springbootinit";
 
 
         // 模型参数信息（首次）
@@ -172,9 +178,9 @@ public class TemplateMaker {
         // 替换变量（首次）
         // String searchStr = "Sum: ";
         // 替换变量（第二次）
-        String searchStr = "MainTemplate";
+        String searchStr = "BaseResponse";
 
-        long id = makeTemplate(meta, originProjectPath, inputFilePath, modelInfo, searchStr, 1L);
+        long id = makeTemplate(meta, originProjectPath, inputFilePath, modelInfo, searchStr, null);
         System.out.println(id);
     }
 
