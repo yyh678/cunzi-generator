@@ -9,10 +9,15 @@ import cn.hutool.json.JSONUtil;
 import com.cunnan.maker.meta.Meta;
 import com.cunnan.maker.meta.enums.FileGenerateTypeEnum;
 import com.cunnan.maker.meta.enums.FileTypeEnum;
+import com.cunnan.maker.template.enums.FileFilterRangeEnum;
+import com.cunnan.maker.template.enums.FileFilterRuleEnum;
+import com.cunnan.maker.template.model.FileFilterConfig;
+import com.cunnan.maker.template.model.TemplateMakerFileConfig;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,14 +28,18 @@ public class TemplateMaker {
      *
      * @param newMeta
      * @param originProjectPath
-     * @param inputFilePath
+     * @param templateMakerFileConfig
      * @param modelInfo
      * @param searchStr
      * @param id
      * @return
      */
-    public static long makeTemplate(Meta newMeta, String originProjectPath, String inputFilePath, Meta.ModelConfig.ModelInfo modelInfo, String searchStr, Long id) {
-        // 没有 id 则生成
+    public static long makeTemplate(Meta newMeta,
+                                    String originProjectPath,
+                                    TemplateMakerFileConfig templateMakerFileConfig,
+                                    Meta.ModelConfig.ModelInfo modelInfo,
+                                    String searchStr,
+                                    Long id) {        // 没有 id 则生成
         if (id == null) {
             id = IdUtil.getSnowflakeNextId();
         }
@@ -50,24 +59,28 @@ public class TemplateMaker {
         // 一、输入信息
         // 输入文件信息
         String sourceRootPath = templatePath + File.separator + FileUtil.getLastPathEle(Paths.get(originProjectPath)).toString();
-
+        sourceRootPath = sourceRootPath.replaceAll("\\\\", "/");
         // 二、生成文件模板
         // 输入文件为目录
+        List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles();
+
         List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>();
-        String inputFileAbsolutePath = sourceRootPath + File.separator + inputFilePath;
-        if (FileUtil.isDirectory(inputFileAbsolutePath)) {
-            List<File> fileList = FileUtil.loopFiles(inputFileAbsolutePath);
+        for (TemplateMakerFileConfig.FileInfoConfig fileInfoConfig : fileConfigInfoList) {
+            String inputFilePath = fileInfoConfig.getPath();
+
+            // 如果填的是相对路径，要改为绝对路径
+            if (!inputFilePath.startsWith(sourceRootPath)) {
+                inputFilePath = sourceRootPath + File.separator + inputFilePath;
+            }
+
+            // 获取过滤后的文件列表（不会存在目录）
+            List<File> fileList = FileFilter.doFilter(inputFilePath, fileInfoConfig.getFilterConfigList());
             for (File file : fileList) {
                 Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(modelInfo, searchStr, sourceRootPath, file);
                 newFileInfoList.add(fileInfo);
             }
-        } else {
-            // 输入的是文件
-            Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(modelInfo, searchStr, sourceRootPath, new File(inputFileAbsolutePath));
-            newFileInfoList.add(fileInfo);
         }
-
-// 三、生成配置文件
+        // 三、生成配置文件
         String metaOutputPath = sourceRootPath + File.separator + "meta.json";
 
         // 如果已有 meta 文件，说明不是第一次制作，则在 meta 基础上进行修改
@@ -161,7 +174,9 @@ public class TemplateMaker {
 
         String projectPath = System.getProperty("user.dir");
         String originProjectPath = new File(projectPath).getParent() + File.separator + "cunzi-generator-demo-projects/springboot-init";
-        String inputFilePath = "src/main/java/com/cunnan/springbootinit";
+        String inputFilePath1 = "src/main/java/com/cunnan/springbootinit/common";
+        String inputFilePath2 = "src/main/java/com/cunnan/springbootinit/controller";
+        List<String> inputFilePathList = Arrays.asList(inputFilePath1, inputFilePath2);
 
 
         // 模型参数信息（首次）
@@ -179,8 +194,24 @@ public class TemplateMaker {
         // String searchStr = "Sum: ";
         // 替换变量（第二次）
         String searchStr = "BaseResponse";
+// 文件过滤
+        TemplateMakerFileConfig templateMakerFileConfig = new TemplateMakerFileConfig();
+        TemplateMakerFileConfig.FileInfoConfig fileInfoConfig1 = new TemplateMakerFileConfig.FileInfoConfig();
+        fileInfoConfig1.setPath(inputFilePath1);
+        List<FileFilterConfig> fileFilterConfigList = new ArrayList<>();
+        FileFilterConfig fileFilterConfig = FileFilterConfig.builder()
+                .range(FileFilterRangeEnum.FILE_NAME.getValue())
+                .rule(FileFilterRuleEnum.CONTAINS.getValue())
+                .value("Base")
+                .build();
+        fileFilterConfigList.add(fileFilterConfig);
+        fileInfoConfig1.setFilterConfigList(fileFilterConfigList);
 
-        long id = makeTemplate(meta, originProjectPath, inputFilePath, modelInfo, searchStr, null);
+        TemplateMakerFileConfig.FileInfoConfig fileInfoConfig2 = new TemplateMakerFileConfig.FileInfoConfig();
+        fileInfoConfig2.setPath(inputFilePath2);
+        templateMakerFileConfig.setFiles(Arrays.asList(fileInfoConfig1, fileInfoConfig2));
+
+        long id = makeTemplate(meta, originProjectPath, templateMakerFileConfig, modelInfo, searchStr, null);
         System.out.println(id);
     }
 
