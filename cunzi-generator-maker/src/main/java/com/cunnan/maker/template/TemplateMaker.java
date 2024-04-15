@@ -250,8 +250,46 @@ public class TemplateMaker {
      * @return
      */
     private static List<Meta.ModelConfig.ModelInfo> distinctModels(List<Meta.ModelConfig.ModelInfo> modelInfoList) {
-        List<Meta.ModelConfig.ModelInfo> newModelInfoList = new ArrayList<>(modelInfoList.stream().collect(Collectors.toMap(Meta.ModelConfig.ModelInfo::getFieldName, o -> o, (e, r) -> r)).values());
-        return newModelInfoList;
+        // 策略：同分组内模型 merge，不同分组保留
+
+        // 1. 有分组的，以组为单位划分
+        Map<String, List<Meta.ModelConfig.ModelInfo>> groupKeyModelInfoListMap = modelInfoList
+                .stream()
+                .filter(modelInfo -> StrUtil.isNotBlank(modelInfo.getGroupKey()))
+                .collect(
+                        Collectors.groupingBy(Meta.ModelConfig.ModelInfo::getGroupKey)
+                );
+
+
+        // 2. 同组内的模型配置合并
+        // 保存每个组对应的合并后的对象 map
+        Map<String, Meta.ModelConfig.ModelInfo> groupKeyMergedModelInfoMap = new HashMap<>();
+        for (Map.Entry<String, List<Meta.ModelConfig.ModelInfo>> entry : groupKeyModelInfoListMap.entrySet()) {
+            List<Meta.ModelConfig.ModelInfo> tempModelInfoList = entry.getValue();
+            List<Meta.ModelConfig.ModelInfo> newModelInfoList = new ArrayList<>(tempModelInfoList.stream()
+                    .flatMap(modelInfo -> modelInfo.getModels().stream())
+                    .collect(
+                            Collectors.toMap(Meta.ModelConfig.ModelInfo::getFieldName, o -> o, (e, r) -> r)
+                    ).values());
+
+            // 使用新的 group 配置
+            Meta.ModelConfig.ModelInfo newModelInfo = CollUtil.getLast(tempModelInfoList);
+            newModelInfo.setModels(newModelInfoList);
+            String groupKey = entry.getKey();
+            groupKeyMergedModelInfoMap.put(groupKey, newModelInfo);
+        }
+
+        // 3. 将模型分组添加到结果列表
+        List<Meta.ModelConfig.ModelInfo> resultList = new ArrayList<>(groupKeyMergedModelInfoMap.values());
+
+        // 4. 将未分组的模型添加到结果列表
+        List<Meta.ModelConfig.ModelInfo> noGroupModelInfoList = modelInfoList.stream().filter(modelInfo -> StrUtil.isBlank(modelInfo.getGroupKey()))
+                .collect(Collectors.toList());
+        resultList.addAll(new ArrayList<>(noGroupModelInfoList.stream()
+                .collect(
+                        Collectors.toMap(Meta.ModelConfig.ModelInfo::getFieldName, o -> o, (e, r) -> r)
+                ).values()));
+        return resultList;
     }
 
     /**
