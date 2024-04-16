@@ -2,8 +2,6 @@ package com.cunnan.maker.template.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.lang.model.element.NestingKind;
 import java.util.List;
 
 /**
@@ -21,7 +19,7 @@ public class TemplateMakerModelConfig {
     @NoArgsConstructor
     public static class ModelInfoConfig {
 
-        private String path;
+        private String fieldName;
 
         private String type;
 
@@ -41,6 +39,6 @@ public class TemplateMakerModelConfig {
 
         private String groupKey;
 
-        private String groupValue;
+        private String groupName;
     }
 }
