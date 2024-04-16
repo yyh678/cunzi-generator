@@ -168,6 +168,7 @@ public class TemplateMaker {
 
     /**
      * 制作文件模板
+     *
      * @param sourceRootPath
      * @param inputFile
      * @return
@@ -185,7 +186,8 @@ public class TemplateMaker {
         // 使用字符串替换，生成模板文件
         String fileContent;
         // 如果已有模板文件，说明不是第一次制作，则在模板基础上再次挖坑
-        if (FileUtil.exist(fileOutputAbsolutePath)) {
+        boolean hasTemplateFile = FileUtil.exist(fileOutputAbsolutePath);
+        if (hasTemplateFile) {
             fileContent = FileUtil.readUtf8String(fileOutputAbsolutePath);
         } else {
             fileContent = FileUtil.readUtf8String(fileInputAbsolutePath);
@@ -214,15 +216,21 @@ public class TemplateMaker {
         fileInfo.setInputPath(fileInputPath);
         fileInfo.setOutputPath(fileOutputPath);
         fileInfo.setType(FileTypeEnum.FILE.getValue());
+        fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
 
+        boolean contentEquals = newFileContent.equals(fileContent);
         // 和原文件一致，没有挖坑，则为静态生成
-        if (newFileContent.equals(fileContent)) {
-            // 输出路径 = 输入路径
-            fileInfo.setOutputPath(fileInputPath);
-            fileInfo.setGenerateType(FileGenerateTypeEnum.STATIC.getValue());
-        } else {
-            // 生成模板文件
-            fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
+        if (!hasTemplateFile) {
+            if (contentEquals) {
+                // 输出路径 = 输入路径
+                fileInfo.setOutputPath(fileInputPath);
+                fileInfo.setGenerateType(FileGenerateTypeEnum.STATIC.getValue());
+            } else {
+                // 生成模板文件
+                FileUtil.writeUtf8String(newFileContent, fileOutputAbsolutePath);
+            }
+        } else if (!contentEquals) {
+            // 有模板文件，内容不一致，更新模板文件
             FileUtil.writeUtf8String(newFileContent, fileOutputAbsolutePath);
         }
         return fileInfo;
@@ -236,18 +244,32 @@ public class TemplateMaker {
         String projectPath = System.getProperty("user.dir");
         String originProjectPath = new File(projectPath).getParent() + File.separator + "cunzi-generator-demo-projects/springboot-init";
         String inputFilePath1 = "src/main/java/com/cunnan/springbootinit/common";
-        String inputFilePath2 = "src/main/java/com/cunnan/springbootinit/controller";
-        List<String> inputFilePathList = Arrays.asList(inputFilePath1, inputFilePath2);
+        String inputFilePath2 = "src/main/resources/application.yml";
 
         // 模型参数配置
         TemplateMakerModelConfig templateMakerModelConfig = new TemplateMakerModelConfig();
 
-        // 模型参数信息（首次）
-//        Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
-//        modelInfo.setFieldName("outputText");
-//        modelInfo.setType("String");
-//        modelInfo.setDefaultValue("sum = ");
+        // - 模型组配置
+        TemplateMakerModelConfig.ModelGroupConfig modelGroupConfig = new TemplateMakerModelConfig.ModelGroupConfig();
+        modelGroupConfig.setGroupKey("mysql");
+        modelGroupConfig.setGroupName("数据库配置");
+        templateMakerModelConfig.setModelGroupConfig(modelGroupConfig);
 
+        // - 模型配置
+        TemplateMakerModelConfig.ModelInfoConfig modelInfoConfig1 = new TemplateMakerModelConfig.ModelInfoConfig();
+        modelInfoConfig1.setFieldName("url");
+        modelInfoConfig1.setType("String");
+        modelInfoConfig1.setDefaultValue("jdbc:mysql://localhost:3306/my_db");
+        modelInfoConfig1.setReplaceText("jdbc:mysql://localhost:3306/my_db");
+
+        TemplateMakerModelConfig.ModelInfoConfig modelInfoConfig2 = new TemplateMakerModelConfig.ModelInfoConfig();
+        modelInfoConfig2.setFieldName("username");
+        modelInfoConfig2.setType("String");
+        modelInfoConfig2.setDefaultValue("root");
+        modelInfoConfig2.setReplaceText("root");
+
+        List<TemplateMakerModelConfig.ModelInfoConfig> modelInfoConfigList = Arrays.asList(modelInfoConfig1, modelInfoConfig2);
+        templateMakerModelConfig.setModels(modelInfoConfigList);
         // 模型参数信息（第二次）
         Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
         modelInfo.setFieldName("className");
@@ -283,7 +305,7 @@ public class TemplateMaker {
         fileGroupConfig.setGroupName("测试分组");
         templateMakerFileConfig.setFileGroupConfig(fileGroupConfig);
 
-        long id = makeTemplate(meta, originProjectPath, templateMakerFileConfig, templateMakerModelConfig, null);
+        long id = makeTemplate(meta, originProjectPath, templateMakerFileConfig, templateMakerModelConfig, 1779434251949604864L);
         System.out.println(id);
     }
 
