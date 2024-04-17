@@ -77,6 +77,7 @@ public class TemplateMaker {
             }
         }
 
+
         // 如果是文件组
         TemplateMakerFileConfig.FileGroupConfig fileGroupConfig = templateMakerFileConfig.getFileGroupConfig();
         if (fileGroupConfig != null) {
@@ -161,6 +162,8 @@ public class TemplateMaker {
             modelInfoList.addAll(newModelInfoList);
         }
 
+
+
         // 2. 输出元信息文件
         FileUtil.writeUtf8String(JSONUtil.toJsonPrettyStr(newMeta), metaOutputPath);
         return id;
@@ -217,6 +220,8 @@ public class TemplateMaker {
         fileInfo.setOutputPath(fileOutputPath);
         fileInfo.setType(FileTypeEnum.FILE.getValue());
         fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
+
+
 
         boolean contentEquals = newFileContent.equals(fileContent);
         // 和原文件一致，没有挖坑，则为静态生成
