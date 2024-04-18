@@ -13,6 +13,7 @@ import com.cunnan.maker.meta.enums.FileTypeEnum;
 import com.cunnan.maker.template.enums.FileFilterRangeEnum;
 import com.cunnan.maker.template.enums.FileFilterRuleEnum;
 import com.cunnan.maker.template.model.FileFilterConfig;
+import com.cunnan.maker.template.model.TemplateMakerConfig;
 import com.cunnan.maker.template.model.TemplateMakerFileConfig;
 import com.cunnan.maker.template.model.TemplateMakerModelConfig;
 
@@ -21,7 +22,26 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author CunNan
+ */
 public class TemplateMaker {
+
+    /**
+     * 制作模板
+     *
+     * @param templateMakerConfig
+     * @return
+     */
+    public static long makeTemplate(TemplateMakerConfig templateMakerConfig) {
+        Meta meta = templateMakerConfig.getMeta();
+        String originProjectPath = templateMakerConfig.getOriginProjectPath();
+        TemplateMakerFileConfig templateMakerFileConfig = templateMakerConfig.getFileConfig();
+        TemplateMakerModelConfig templateMakerModelConfig = templateMakerConfig.getModelConfig();
+        Long id = templateMakerConfig.getId();
+
+        return makeTemplate(meta, originProjectPath, templateMakerFileConfig, templateMakerModelConfig, id);
+    }
 
     /**
      * 制作模板
@@ -132,8 +152,8 @@ public class TemplateMaker {
             newModelInfoList.addAll(inputModelInfoList);
         }
 
-        // 三、生成配置文件
-        String metaOutputPath = sourceRootPath + File.separator + "meta.json";
+        // 三、生成配置文件 生成在工作空间目录，防止多次挖坑时出现生成模板文件的问题
+        String metaOutputPath = templatePath + File.separator + "meta.json";
 
         // 如果已有 meta 文件，说明不是第一次制作，则在 meta 基础上进行修改
         if (FileUtil.exist(metaOutputPath)) {

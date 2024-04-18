@@ -1,6 +1,5 @@
-package com.cunnan.maker.template;
-
 import com.cunnan.maker.meta.Meta;
+import com.cunnan.maker.template.TemplateMaker;
 import com.cunnan.maker.template.enums.FileFilterRangeEnum;
 import com.cunnan.maker.template.enums.FileFilterRuleEnum;
 import com.cunnan.maker.template.model.FileFilterConfig;
